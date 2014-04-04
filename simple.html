@@ -1,0 +1,61 @@
+<html>
+<head>
+    <script src="vendor/jquery-1.11.0.min.js"></script>
+	<script src="vendor/dygraph-combined.js"></script>
+</head>
+<body>
+
+    <div id="div_g" style="position: absolute; left: 0px; right: 0px; top: 0px; bottom: 0px;"></div>
+
+    <script>
+        function showGraph() {
+            $.ajax('bottom.txt',{
+                success: function(data) {
+                    renderGraph(prepareData(data));
+                }
+            });
+        }
+
+        function prepareData(data) {
+            var rows = data.split('\n');
+            var matrix = [];
+            rows.forEach(function (row) {
+                matrix.push(row.split(' '));
+            });
+            var series = [];
+            var x = 0;
+            for (var i = 0; i < matrix[0].length; i++) {
+                var s = [x++];
+                for (var y = 0; y < matrix.length; y++) {
+                    s.push(matrix[y][i]);
+                }
+                series.push(s);
+            }
+            return series;
+        }
+
+        function renderGraph(data) {
+
+            var labels = [];
+            var i = 0;
+            data[0].forEach(function(v) {
+                labels.push(i++)
+            })
+
+            var g = new Dygraph(
+                    document.getElementById("div_g"),
+                    data,
+                    {
+                        labels: labels,
+                        animatedZooms: true
+
+                    }
+            );
+        }
+
+        $(document).ready(function () {
+            showGraph();
+        });
+    </script>
+</body>
+</html>
